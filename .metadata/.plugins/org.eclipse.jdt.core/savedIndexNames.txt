@@ -1,0 +1,6 @@
+INDEX VERSION 1.131+D:\root\Documents\Info\projets\Twizzy\twEzMage_twizy_2020\.metadata\.plugins\org.eclipse.jdt.core
+1248545562.index
+1945842517.index
+1257910346.index
+1226574113.index
+2159159229.index

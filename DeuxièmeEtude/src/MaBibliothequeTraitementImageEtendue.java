@@ -192,7 +192,21 @@ public class MaBibliothequeTraitementImageEtendue {
 
 	//methode à completer
 	public static double Similitude(Mat object,String signfile) {
-
+		double n = -1;
+		switch (Principale.choixSimilute) {
+		case 1 :
+			n = SimilitudeOrb(object,signfile);
+			break;
+		case 2 :
+			n = SimilitudeAire(object,signfile);
+			break;
+		case 3 :
+			n = SimilitudeOCR(object,signfile);
+			break;
+		}
+		return n;
+	}
+	public static double SimilitudeOrb(Mat object,String signfile) {
 		// Conversion du signe de reference en niveaux de gris et normalisation
 		Mat panneauref = Highgui.imread(signfile);
 		Mat graySign = new Mat(panneauref.rows(), panneauref.cols(), panneauref.type());
@@ -227,25 +241,6 @@ public class MaBibliothequeTraitementImageEtendue {
 		Mat signDescriptor = new Mat(panneauref.rows(), panneauref.cols(), panneauref.type());
 		orbExtractor.compute(graySign,  signKeypoints,  signDescriptor);
 
-		int nbBlancs=0;
-		//System.out.println(signfile);
-		for(int i=0;i<grayObject.height();i++) {
-			for(int j=0;j<grayObject.width();j++) {
-				double[] BGRObject = grayObject.get(i, j);
-				double[] BGRSign = graySign.get(i, j);
-
-				//System.out.println(Arrays.toString(BGRObject));
-				if((BGRObject[0]+BGRSign[0])/2>=230 ) {
-					nbBlancs++;
-				}
-
-
-
-
-			}}
-		return nbBlancs;
-
-		/*
 		//Faire le matching
 		MatOfDMatch matchs = new MatOfDMatch();
 		DescriptorMatcher matcher = DescriptorMatcher.create(DescriptorMatcher.BRUTEFORCE);
@@ -279,10 +274,54 @@ public class MaBibliothequeTraitementImageEtendue {
 
 		return moy;
 
-		 */
+
 
 
 	}
 
+	public static double SimilitudeAire(Mat object,String signfile) {
+		// Conversion du signe de reference en niveaux de gris et normalisation
+		Mat panneauref = Highgui.imread(signfile);
+		Mat graySign = new Mat(panneauref.rows(), panneauref.cols(), panneauref.type());
+		Imgproc.cvtColor(panneauref, graySign, Imgproc.COLOR_BGRA2GRAY);
+		Core.normalize(graySign, graySign, 0, 255, Core.NORM_MINMAX);
+		//Mat signeNoirEtBlanc=new Mat();
+
+
+
+		//Conversion du panneau extrait de l'image en gris et normalisation et redimensionnement à la taille du panneau de réference
+		Mat grayObject = new Mat(panneauref.rows(), panneauref.cols(), panneauref.type());
+		Imgproc.resize(object, object, graySign.size());
+		//afficheImage("Panneau extrait de l'image",object);
+		Imgproc.cvtColor(object, grayObject, Imgproc.COLOR_BGRA2GRAY);
+		Core.normalize(grayObject, grayObject, 0, 255, Core.NORM_MINMAX);
+		Imgproc.resize(grayObject, grayObject, graySign.size());	
+
+		int nbBlancs=0;
+		//System.out.println(signfile);
+		for(int i=0;i<grayObject.height();i++) {
+			for(int j=0;j<grayObject.width();j++) {
+				double[] BGRObject = grayObject.get(i, j);
+				double[] BGRSign = graySign.get(i, j);
+
+				//System.out.println(Arrays.toString(BGRObject));
+				if((BGRObject[0]+BGRSign[0])/2>=230 ) {
+					nbBlancs++;
+				}
+
+
+
+
+			}
+		}
+		return nbBlancs;
+	}
+
+	public static double SimilitudeOCR(Mat object,String signfile) {
+		// TODO : OCR
+		return -1;
+	}
 }
+
+
 

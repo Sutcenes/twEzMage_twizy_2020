@@ -7,11 +7,12 @@ import org.opencv.highgui.*;
 //import utilitaireAgreg.MaBibliothequeTraitementImage;
 public class Principale {
 
+	static int choixSimilute = 2;
 	public static void main(String[] args)
 	{
 		//Ouverture le l'image et saturation des rouges
 		System.loadLibrary(Core.NATIVE_LIBRARY_NAME);
-		Mat m=Highgui.imread("p8.jpg",Highgui.CV_LOAD_IMAGE_COLOR);
+		Mat m=Highgui.imread("p9.jpg",Highgui.CV_LOAD_IMAGE_COLOR);
 		MaBibliothequeTraitementImageEtendue.afficheImage("Image testée", m);
 		Mat transformee=MaBibliothequeTraitementImageEtendue.transformeBGRversHSV(m);
 		//la methode seuillage est ici extraite de l'archivage jar du meme nom 

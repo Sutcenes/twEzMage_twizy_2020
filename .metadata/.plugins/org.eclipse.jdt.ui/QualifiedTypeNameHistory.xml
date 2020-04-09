@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<qualifiedTypeNameHistroy>
+    <fullyQualifiedTypeName name="org.opencv.core.Mat"/>
+    <fullyQualifiedTypeName name="org.opencv.core.Core"/>
+    <fullyQualifiedTypeName name="org.opencv.core.CvType"/>
+    <fullyQualifiedTypeName name="java.lang.reflect.Array"/>
+    <fullyQualifiedTypeName name="MaBibliothequeTraitementImage"/>
+    <fullyQualifiedTypeName name="java.util.LinkedList"/>
+</qualifiedTypeNameHistroy>
