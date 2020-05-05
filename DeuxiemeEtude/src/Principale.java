@@ -22,12 +22,10 @@ public class Principale {
 
 		//Création d'une liste des contours à partir de l'image saturée
 		List<MatOfPoint> ListeContours= MaBibliothequeTraitementImageEtendue.ExtractContours(saturee);
-		int i=0;
 		double [] scores=new double [6];
 		//Pour tous les contours de la liste
 		System.out.println("Nb de contours: "+ListeContours.size());
 		for (MatOfPoint contour: ListeContours  ){
-			i++;
 			objetrond=MaBibliothequeTraitementImageEtendue.DetectForm(m,contour);
 
 			if (objetrond!=null){
