@@ -84,6 +84,22 @@ public class MaBibliothequeTraitementImageEtendue {
 
 	}
 
+	public static BufferedImage afficheImage1(Mat img){
+		MatOfByte matOfByte=new MatOfByte();
+		Highgui.imencode(".png",img,matOfByte);
+		byte[] byteArray=matOfByte.toArray();
+		BufferedImage bufImage=null;
+		try{
+			InputStream in=new ByteArrayInputStream(byteArray);
+			bufImage=ImageIO.read(in);
+		}
+		catch(Exception e){
+			e.printStackTrace();
+		}
+		return bufImage;
+
+	}
+
 
 
 	//Methode qui permet d'extraire les contours d'une image donnee
@@ -164,7 +180,7 @@ public class MaBibliothequeTraitementImageEtendue {
 		//on dit que c'est un cercle si l'aire occupé par le contour est à supérieure à  80% de l'aire occupée par un cercle parfait
 		if ((contourArea / (Math.PI*radius[0]*radius[0])) >=0.8) {
 			//System.out.println("Cercle");
-			
+
 			//A commenter si on veut pas tracer le cercle et le rectangle (OCR par ex)
 			if(Principale.choixMethode==1) {
 

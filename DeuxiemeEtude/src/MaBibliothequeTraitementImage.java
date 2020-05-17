@@ -90,7 +90,7 @@ public class MaBibliothequeTraitementImage {
 		Core.inRange(input, new Scalar(seuilRougeViolet,seuilSaturation,seuilSaturation), new Scalar(180,255,255), threshold_img2); //fushia
 		Core.bitwise_or(threshold_img1,threshold_img2,threshold_img);
 		Imgproc.GaussianBlur(threshold_img, threshold_img, new Size(9, 9), 2,2);
-		MaBibliothequeTraitementImage.afficheImage("Seuillage", threshold_img);
+		//MaBibliothequeTraitementImage.afficheImage("Seuillage", threshold_img);
 		return threshold_img;
 
 
