@@ -25,7 +25,7 @@ import org.opencv.imgproc.Imgproc;
 public class AnalyseVideo {
 	static {
 		System.loadLibrary(Core.NATIVE_LIBRARY_NAME);
-		System.loadLibrary("opencv_ffmpeg2413_64"); //lecture video
+		System.load("C:\\Users\\WILLIAM\\Downloads\\opencv\\build\\x64\\vc14\\bin\\opencv_ffmpeg2413_64.dll"); //lecture video
 	}
 
 	static Mat imag = null;
@@ -40,7 +40,7 @@ public class AnalyseVideo {
 		jframe.setVisible(true);
 
 		Mat frame = new Mat();
-		VideoCapture camera = new VideoCapture("video1.avi");
+		VideoCapture camera = new VideoCapture("video1.mp4");
 		Mat PanneauAAnalyser = null;
 
 

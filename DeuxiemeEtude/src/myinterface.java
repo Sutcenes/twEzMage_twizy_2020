@@ -1,4 +1,5 @@
 import java.awt.BorderLayout;
+import java.awt.Button;
 import java.awt.EventQueue;
 
 import javax.swing.JFrame;
@@ -15,6 +16,7 @@ import org.opencv.core.MatOfPoint;
 import org.opencv.core.Point;
 import org.opencv.core.Scalar;
 import org.opencv.highgui.Highgui;
+import org.opencv.highgui.VideoCapture;
 import org.opencv.imgproc.Imgproc;
 
 import javax.imageio.ImageIO;
@@ -25,6 +27,7 @@ import javax.swing.JTextField;
 import java.awt.event.ActionListener;
 import java.awt.image.BufferedImage;
 import java.io.ByteArrayInputStream;
+import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.List;
@@ -65,19 +68,19 @@ public class myinterface extends JFrame {
 	 */
 	public myinterface() {
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-		setBounds(100, 100, 1200, 800);
+		setBounds(100, 100, 1000, 640);
 		contentPane = new JPanel();
 		contentPane.setBorder(new EmptyBorder(5, 5, 5, 5));
 		setContentPane(contentPane);
 		contentPane.setLayout(null);
 
 		JPanel panel = new JPanel();
-		panel.setBounds(5, 5, 1169, 745);
+		panel.setBounds(5, 5, 1000, 600);
 		contentPane.add(panel);
 		panel.setLayout(null);
 
 		panel_1 = new JPanel();
-		panel_1.setBounds(156, 43, 1003, 660);
+		panel_1.setBounds(156, 43, 795, 523);
 		panel.add(panel_1);
 		JPanel panel_2 = new JPanel();
 		panel_2.setBounds(10, 215, 136, 137);
@@ -280,12 +283,115 @@ public class myinterface extends JFrame {
 		panel.add(btnMatching);
 
 		vitesse = new JTextField();
-		vitesse.setBounds(176, 714, 404, 20);
+		vitesse.setBounds(156, 569, 404, 20);
 		panel.add(vitesse);
 		vitesse.setColumns(10);
+		
+		
+		
+		JButton btnVideo = new JButton("play vid\u00E9o");
+		btnVideo.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				System.loadLibrary(Core.NATIVE_LIBRARY_NAME);
+				System.load("C:\\Users\\WILLIAM\\Downloads\\opencv\\build\\x64\\vc14\\bin\\opencv_ffmpeg2413_64.dll"); //lecture video
+				
+				Mat imag = null;
+				int choixMethode = choixSimilitude;	//1=Orb  2=Match  3=OCR
+				
+				/*JLabel vidpanel = new JLabel();
+				panel_1.removeAll();
+				panel_1.repaint();
+				panel_1.add(vidpanel);
+				validate();*/
+				
+				Mat frame = new Mat();
+				VideoCapture camera = new VideoCapture(nomImage.getText());
+				Mat PanneauAAnalyser = null;
+
+				while (camera.read(frame)) {
 
 
+					panel_1.removeAll();
+					
+					panel_1.add(new JLabel(new ImageIcon(Mat2bufferedImage(frame))));
+					panel_1.repaint();
+					validate();
+					/*
+					ImageIcon image = new ImageIcon(Mat2bufferedImage(frame));
+					vidpanel.setIcon(image);
+					vidpanel.repaint();*/
+
+					Mat transformee=MaBibliothequeTraitementImageEtendue.transformeBGRversHSV(frame);
+					//la methode seuillage est ici extraite de l'archivage jar du meme nom 
+					Mat saturee=MaBibliothequeTraitementImage.seuillage(transformee, 6, 170, 90); 
+					Mat objetrond = null;
+					//Création d'une liste des contours à partir de l'image saturée
+					List<MatOfPoint> ListeContours= MaBibliothequeTraitementImageEtendue.ExtractContours(saturee);
+					int i=0;
+					int indexmax=0;
+
+					for (MatOfPoint contour: ListeContours  ){
+						i++;
+						objetrond=MaBibliothequeTraitementImageEtendue.DetectForm(frame,contour);
+						indexmax=identifiepanneau(objetrond);
+
+						switch(indexmax){
+						case -1:;break;
+						case 0:vitesse.setText("Panneau 30 détécté");break;
+						case 1:vitesse.setText("Panneau 50 détécté");break;
+						case 2:vitesse.setText("Panneau 70 détécté");break;
+						case 3:vitesse.setText("Panneau 90 détécté");break;
+						case 4:vitesse.setText("Panneau 110 détécté");break;
+						case 5:vitesse.setText("Panneau interdiction de dépasser détécté");break;
+						}
+
+					}
+				}
+				
+				
+			}
+			
+		});
+		btnVideo.setBounds(675, 12, 145, 23);
+		panel.add(btnVideo);
+		
+		
+
+	}
+	
+	public static int identifiepanneau(Mat objetrond){
+		double [] scores=new double [6];
+		int indexmax=-1;
+		if (objetrond!=null){
+			scores[0]=MaBibliothequeTraitementImageEtendue.Similitude(objetrond,"ref30.jpg");
+			scores[1]=MaBibliothequeTraitementImageEtendue.Similitude(objetrond,"ref50.jpg");
+			scores[2]=MaBibliothequeTraitementImageEtendue.Similitude(objetrond,"ref70.jpg");
+			scores[3]=MaBibliothequeTraitementImageEtendue.Similitude(objetrond,"ref90.jpg");
+			scores[4]=MaBibliothequeTraitementImageEtendue.Similitude(objetrond,"ref110.jpg");
+			scores[5]=MaBibliothequeTraitementImageEtendue.Similitude(objetrond,"refdouble.jpg");
+
+			double scoremax=scores[0];
+
+			for(int j=1;j<scores.length;j++){
+				if (scores[j]>scoremax){scoremax=scores[j];indexmax=j;}}	
 
 
+		}
+		return indexmax;
+	}
+	
+	public static BufferedImage Mat2bufferedImage(Mat image) {
+		MatOfByte bytemat = new MatOfByte();
+		Highgui.imencode(".jpg", image, bytemat);
+		byte[] bytes = bytemat.toArray();
+		InputStream in = new ByteArrayInputStream(bytes);
+		BufferedImage img = null;
+		try {
+			img = ImageIO.read(in);
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		return img;
 	}
 }
