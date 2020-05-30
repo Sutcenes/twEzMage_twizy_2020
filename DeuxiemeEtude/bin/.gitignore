@@ -1,3 +1,5 @@
+/net/
+/MaBibliothequeTraitementImage.class
 /MaBibliothequeTraitementImageEtendue.class
 /Principale.class
 /com/
@@ -8,6 +10,7 @@
 /myinterface$5.class
 /myinterface$6.class
 /myinterface$7.class
-/myinterface.class
-/net/
 /myinterface$8.class
+/myinterface.class
+/AnalyseVideo.class
+/MyThread.class

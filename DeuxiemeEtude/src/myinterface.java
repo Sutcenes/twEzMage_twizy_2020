@@ -6,6 +6,7 @@ import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.border.EmptyBorder;
+import javax.swing.event.ChangeListener;
 
 import org.opencv.core.Core;
 import org.opencv.core.CvType;
@@ -37,6 +38,7 @@ import javax.swing.JScrollPane;
 import javax.swing.JTabbedPane;
 import javax.swing.JScrollBar;
 import javax.swing.JComboBox;
+import javax.swing.event.ChangeEvent;
 
 public class myinterface extends JFrame {
 
@@ -44,7 +46,9 @@ public class myinterface extends JFrame {
 	private JTextField nomImage;
 	private JTextField vitesse;
 	private JPanel panel_1 ;
-	static int choixSimilitude = 1;
+	private JPanel panel_2 ;
+	private static JPanel panel_3 ;
+	//static int choixSimilitude = 1;
 
 
 	/**
@@ -68,26 +72,29 @@ public class myinterface extends JFrame {
 	 */
 	public myinterface() {
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-		setBounds(100, 100, 1000, 640);
+		setBounds(100, 100, 1200, 700);
 		contentPane = new JPanel();
 		contentPane.setBorder(new EmptyBorder(5, 5, 5, 5));
 		setContentPane(contentPane);
 		contentPane.setLayout(null);
 
 		JPanel panel = new JPanel();
-		panel.setBounds(5, 5, 1000, 600);
+		panel.setBounds(10, 11, 1164, 639);
 		contentPane.add(panel);
 		panel.setLayout(null);
 
 		panel_1 = new JPanel();
-		panel_1.setBounds(156, 43, 795, 523);
+		panel_1.setBounds(274, 46, 880, 582);
 		panel.add(panel_1);
-		JPanel panel_2 = new JPanel();
-		panel_2.setBounds(10, 215, 136, 137);
+	    panel_2 = new JPanel();
+		panel_2.setBounds(10, 215, 136, 117);
 		panel.add(panel_2);
+		panel_3 = new JPanel();
+		panel_3.setBounds(10, 343, 254, 254);
+		panel.add(panel_3);
 
 		JComboBox comboBox = new JComboBox();
-		comboBox.setBounds(379, 12, 201, 23);
+		comboBox.setBounds(702, 11, 201, 23);
 		comboBox.addItem("orb");
 		comboBox.addItem("aire");
 		comboBox.addItem("OCR");
@@ -112,7 +119,7 @@ public class myinterface extends JFrame {
 		panel.add(btnChargerImage);
 
 		nomImage = new JTextField();
-		nomImage.setBounds(235, 12, 86, 20);
+		nomImage.setBounds(580, 12, 86, 20);
 		panel.add(nomImage);
 		nomImage.setColumns(10);
 
@@ -214,6 +221,7 @@ public class myinterface extends JFrame {
 		JButton btnMatching = new JButton("matching");
 		btnMatching.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
+				String fileImg = "";
 				//Ouverture le l'image et saturation des rouges
 				System.loadLibrary(Core.NATIVE_LIBRARY_NAME);
 				Mat m=Highgui.imread(nomImage.getText(),Highgui.CV_LOAD_IMAGE_COLOR);
@@ -236,15 +244,18 @@ public class myinterface extends JFrame {
 					if (objetrond!=null){
 						if(comboBox.getSelectedItem().equals("orb"))
 						{
-							choixSimilitude = 1;
+							Principale.choixMethode=1;
+							//choixSimilitude = 1;
 						}
 						if(comboBox.getSelectedItem().equals("aire"))
 						{
-							choixSimilitude = 2;
+							Principale.choixMethode=2;
+							//choixSimilitude = 2;
 						}
 						if(comboBox.getSelectedItem().equals("OCR"))
 						{
-							choixSimilitude = 3;
+							Principale.choixMethode=3;
+							//choixSimilitude = 3;
 						}
 						//MaBibliothequeTraitementImage.afficheImage("Objet rond detécté", objetrond);
 						panel_2.removeAll();
@@ -266,97 +277,109 @@ public class myinterface extends JFrame {
 							if (scores[j]>scoremax){scoremax=scores[j];indexmax=j;}}	
 						if(scoremax<0){System.out.println("Aucun Panneau détécté");}
 						else{switch(indexmax){
+						
 						case -1:;break;
-						case 0:vitesse.setText("Panneau 30 détécté");break;
-						case 1:vitesse.setText("Panneau 50 détécté");break;
-						case 2:vitesse.setText("Panneau 70 détécté");break;
-						case 3:vitesse.setText("Panneau 90 détécté");break;
-						case 4:vitesse.setText("Panneau 110 détécté");break;
-						case 5:vitesse.setText("Panneau interdiction de dépasser détécté");break;
+						case 0:vitesse.setText("Panneau 30 détécté");fileImg="ref30.jpg";break;
+						case 1:vitesse.setText("Panneau 50 détécté");fileImg="ref50.jpg";break;
+						case 2:vitesse.setText("Panneau 70 détécté");fileImg="ref70.jpg";break;
+						case 3:vitesse.setText("Panneau 90 détécté");fileImg="ref90.jpg";break;
+						case 4:vitesse.setText("Panneau 110 détécté");fileImg="ref110.jpg";break;
+						case 5:vitesse.setText("Panneau interdiction de dépasser détécté");fileImg="refdouble.jpg";break;
 						}}
 
+						
 					}
 				}
+				
+				if(Principale.choixMethode==3) {
+					fileImg = "gray2.png";
+				}
+				panel_3.removeAll();
+				panel_3.repaint();
+				panel_3.add(new JLabel(new ImageIcon(fileImg)));
+				validate();	
+				
+				
 			}
 		});
 		btnMatching.setBounds(10, 181, 136, 23);
 		panel.add(btnMatching);
 
 		vitesse = new JTextField();
-		vitesse.setBounds(156, 569, 404, 20);
+		vitesse.setBounds(10, 608, 254, 20);
 		panel.add(vitesse);
 		vitesse.setColumns(10);
 		
 		
 		
-		JButton btnVideo = new JButton("play vid\u00E9o");
-		btnVideo.addActionListener(new ActionListener() {
+		JButton btnVideo = new JButton("play vid\u00E9o");	
+		 btnVideo.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				System.loadLibrary(Core.NATIVE_LIBRARY_NAME);
-				System.load("C:\\Users\\WILLIAM\\Downloads\\opencv\\build\\x64\\vc14\\bin\\opencv_ffmpeg2413_64.dll"); //lecture video
+				System.loadLibrary("opencv_ffmpeg2413_64"); //lecture video
+	
 				
-				Mat imag = null;
-				int choixMethode = choixSimilitude;	//1=Orb  2=Match  3=OCR
-				
-				/*JLabel vidpanel = new JLabel();
-				panel_1.removeAll();
-				panel_1.repaint();
-				panel_1.add(vidpanel);
-				validate();*/
-				
-				Mat frame = new Mat();
-				VideoCapture camera = new VideoCapture(nomImage.getText());
-				Mat PanneauAAnalyser = null;
-
-				while (camera.read(frame)) {
-
-
-					panel_1.removeAll();
-					
-					panel_1.add(new JLabel(new ImageIcon(Mat2bufferedImage(frame))));
-					panel_1.repaint();
-					validate();
-					/*
-					ImageIcon image = new ImageIcon(Mat2bufferedImage(frame));
-					vidpanel.setIcon(image);
-					vidpanel.repaint();*/
-
-					Mat transformee=MaBibliothequeTraitementImageEtendue.transformeBGRversHSV(frame);
-					//la methode seuillage est ici extraite de l'archivage jar du meme nom 
-					Mat saturee=MaBibliothequeTraitementImage.seuillage(transformee, 6, 170, 90); 
-					Mat objetrond = null;
-					//Création d'une liste des contours à partir de l'image saturée
-					List<MatOfPoint> ListeContours= MaBibliothequeTraitementImageEtendue.ExtractContours(saturee);
-					int i=0;
-					int indexmax=0;
-
-					for (MatOfPoint contour: ListeContours  ){
-						i++;
-						objetrond=MaBibliothequeTraitementImageEtendue.DetectForm(frame,contour);
-						indexmax=identifiepanneau(objetrond);
-
-						switch(indexmax){
-						case -1:;break;
-						case 0:vitesse.setText("Panneau 30 détécté");break;
-						case 1:vitesse.setText("Panneau 50 détécté");break;
-						case 2:vitesse.setText("Panneau 70 détécté");break;
-						case 3:vitesse.setText("Panneau 90 détécté");break;
-						case 4:vitesse.setText("Panneau 110 détécté");break;
-						case 5:vitesse.setText("Panneau interdiction de dépasser détécté");break;
-						}
-
-					}
-				}
-				
-				
+				MyThread t1 = new MyThread(nomImage.getText(),vitesse,panel_1);
+                t1.start();
 			}
 			
 		});
-		btnVideo.setBounds(675, 12, 145, 23);
+		btnVideo.setBounds(149, 11, 136, 23);
 		panel.add(btnVideo);
 		
-		
+	}
+	
+	public static void LectureVideo(String nomVideo, JTextField vitesse, JPanel panel_1 ) {
 
+		Mat frame = new Mat();
+		VideoCapture camera = new VideoCapture(nomVideo);
+		Mat PanneauAAnalyser = null;
+
+
+		while (camera.read(frame)) {
+
+			String fileImg = "";
+
+			panel_1.removeAll();
+			
+			panel_1.add(new JLabel(new ImageIcon(Mat2bufferedImage(frame))));
+			panel_1.repaint();
+			panel_1.validate();
+			
+
+			Mat transformee=MaBibliothequeTraitementImageEtendue.transformeBGRversHSV(frame);
+			//la methode seuillage est ici extraite de l'archivage jar du meme nom 
+			Mat saturee=MaBibliothequeTraitementImage.seuillage(transformee, 6, 170, 90); 
+			Mat objetrond = null;
+			//Création d'une liste des contours à partir de l'image saturée
+			List<MatOfPoint> ListeContours= MaBibliothequeTraitementImageEtendue.ExtractContours(saturee);
+			int i=0;
+			int indexmax=0;
+
+			for (MatOfPoint contour: ListeContours  ){
+				i++;
+				objetrond=MaBibliothequeTraitementImageEtendue.DetectForm(frame,contour);
+				indexmax=identifiepanneau(objetrond);
+
+				switch(indexmax){
+				case -1:;break;
+				case 0:vitesse.setText("Panneau 30 détécté");fileImg="ref30.jpg";break;
+				case 1:vitesse.setText("Panneau 50 détécté");fileImg="ref50.jpg";break;
+				case 2:vitesse.setText("Panneau 70 détécté");fileImg="ref70.jpg";break;
+				case 3:vitesse.setText("Panneau 90 détécté");fileImg="ref90.jpg";break;
+				case 4:vitesse.setText("Panneau 110 détécté");fileImg="ref110.jpg";break;
+				case 5:vitesse.setText("Panneau interdiction de dépasser détécté");fileImg="refdouble.jpg";break;
+				}
+
+			}
+			if(Principale.choixMethode==3) {
+				fileImg = "gray2.png";
+			}
+			panel_3.removeAll();
+			panel_3.repaint();
+			panel_3.add(new JLabel(new ImageIcon(fileImg)));
+			panel_3.validate();	
+		}
 	}
 	
 	public static int identifiepanneau(Mat objetrond){

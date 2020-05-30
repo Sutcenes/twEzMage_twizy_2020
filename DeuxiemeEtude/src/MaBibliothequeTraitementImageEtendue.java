@@ -330,7 +330,7 @@ public class MaBibliothequeTraitementImageEtendue {
 			//System.out.println(matchs.dump());
 			Mat matchedImage = new Mat(panneauref.rows(), panneauref.cols()*2, panneauref.type());
 			Features2d.drawMatches(object, objectKeypoints, panneauref, signKeypoints, matchs, matchedImage);
-			MaBibliothequeTraitementImage.afficheImage("matches",matchedImage);
+			//MaBibliothequeTraitementImage.afficheImage("matches",matchedImage);
 
 			//System.out.println(matchs.size().height);
 
@@ -351,7 +351,7 @@ public class MaBibliothequeTraitementImageEtendue {
 			//System.out.println(distances);
 			moy=moy/n;
 
-			System.out.println("Moyenne: "+signfile+" "+moy);
+			//System.out.println("Moyenne: "+signfile+" "+moy);
 			//System.out.println();
 
 			indicateur = moy;
