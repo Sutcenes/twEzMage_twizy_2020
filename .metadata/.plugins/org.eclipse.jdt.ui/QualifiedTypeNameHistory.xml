@@ -5,5 +5,9 @@
     <fullyQualifiedTypeName name="org.opencv.core.CvType"/>
     <fullyQualifiedTypeName name="java.lang.reflect.Array"/>
     <fullyQualifiedTypeName name="MaBibliothequeTraitementImage"/>
+    <fullyQualifiedTypeName name="org.opencv.features2d.DMatch"/>
     <fullyQualifiedTypeName name="java.util.LinkedList"/>
+    <fullyQualifiedTypeName name="java.lang.module.FindException"/>
+    <fullyQualifiedTypeName name="org.opencv.calib3d.Calib3d"/>
+    <fullyQualifiedTypeName name="java.lang.Thread"/>
 </qualifiedTypeNameHistroy>

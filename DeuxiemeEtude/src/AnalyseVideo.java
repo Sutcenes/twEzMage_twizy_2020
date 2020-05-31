@@ -35,7 +35,7 @@ public class AnalyseVideo {
 	}
 
 	static Mat imag = null;
-	static int choixMethode = 2;	//1=Orb  2=Match  3=OCR
+	static int choixMethode = 1;	//1=Orb  2=Match  3=OCR
 	public static void main(String[] args) {
 
 		JFrame jframe = new JFrame("Detection de panneaux sur un flux vidéo");
@@ -46,7 +46,7 @@ public class AnalyseVideo {
 		jframe.setVisible(true);
 
 		Mat frame = new Mat();
-		VideoCapture camera = new VideoCapture("video1.avi");
+		VideoCapture camera = new VideoCapture("video2.avi");
 		Mat PanneauAAnalyser = null;
 		int Moyenne = 30;
 		int AncienneMoyenne;
@@ -96,7 +96,7 @@ public class AnalyseVideo {
 					ListPanneaux.add(110);
 					break;
 				case 5:
-					System.out.println("Panneau interdiction de dépasser détécté");
+					//System.out.println("Panneau interdiction de dépasser détécté");
 					break;
 				}
 
