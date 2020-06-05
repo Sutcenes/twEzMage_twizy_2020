@@ -2,6 +2,7 @@ import java.awt.image.BufferedImage;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
@@ -10,6 +11,8 @@ import javax.imageio.ImageIO;
 import javax.swing.ImageIcon;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
+import javax.swing.JPanel;
+import javax.swing.JTextField;
 
 import org.opencv.core.Core;
 import org.opencv.core.CvType;
@@ -23,13 +26,16 @@ import org.opencv.highgui.Highgui;
 import org.opencv.highgui.VideoCapture;
 import org.opencv.imgproc.Imgproc;
 public class AnalyseVideo {
+
+	static ArrayList<Integer> ListPanneaux = new ArrayList<Integer>();
+
 	static {
 		System.loadLibrary(Core.NATIVE_LIBRARY_NAME);
 		System.loadLibrary("opencv_ffmpeg2413_64"); //lecture video
 	}
 
 	static Mat imag = null;
-	static int choixMethode = 2;	//1=Orb  2=Match  3=OCR
+	static int choixMethode = 1;	//1=Orb  2=Match  3=OCR
 	public static void main(String[] args) {
 
 		JFrame jframe = new JFrame("Detection de panneaux sur un flux vidéo");
@@ -40,13 +46,15 @@ public class AnalyseVideo {
 		jframe.setVisible(true);
 
 		Mat frame = new Mat();
-		VideoCapture camera = new VideoCapture("video1.avi");
+		VideoCapture camera = new VideoCapture("video2.avi");
 		Mat PanneauAAnalyser = null;
-
+		int Moyenne = 30;
+		int AncienneMoyenne;
+		int indexmaxAbsent = 0;
 
 		while (camera.read(frame)) {
 
-
+			AncienneMoyenne = Moyenne;
 			ImageIcon image = new ImageIcon(Mat2bufferedImage(frame));
 			vidpanel.setIcon(image);
 			vidpanel.repaint();
@@ -67,18 +75,103 @@ public class AnalyseVideo {
 
 				switch(indexmax){
 				case -1:;break;
-				case 0:System.out.println("Panneau 30 détécté");break;
-				case 1:System.out.println("Panneau 50 détécté");break;
-				case 2:System.out.println("Panneau 70 détécté");break;
-				case 3:System.out.println("Panneau 90 détécté");break;
-				case 4:System.out.println("Panneau 110 détécté");break;
-				case 5:System.out.println("Panneau interdiction de dépasser détécté");break;
+				case 0:
+					//System.out.println("Panneau 30 détécté");
+					ListPanneaux.add(30);
+					break;
+				case 1:
+					//System.out.println("Panneau 50 détécté");
+					ListPanneaux.add(50);
+					break;
+				case 2:
+					//System.out.println("Panneau 70 détécté");
+					ListPanneaux.add(70);
+					break;
+				case 3:
+					//System.out.println("Panneau 90 détécté");
+					ListPanneaux.add(90);
+					break;
+				case 4:
+					//System.out.println("Panneau 110 détécté");
+					ListPanneaux.add(110);
+					break;
+				case 5:
+					//System.out.println("Panneau interdiction de dépasser détécté");
+					break;
 				}
 
+			}
+			if (indexmax == -1) {
+				indexmaxAbsent ++;
+			}
+			if (indexmaxAbsent > 50) {
+				indexmaxAbsent = 0;
+				ListPanneaux.clear();
+			}
+			if (ListPanneaux.size() > 20){
+				ListPanneaux.remove(0);
+			}
+			Moyenne = Moyenne(ListPanneaux);
+
+			if (Moyenne != AncienneMoyenne && !ListPanneaux.isEmpty()) {
+				System.out.println(ListPanneaux);
+				System.out.println(Moyenne+"\n\n");
 			}
 		}
 	}
 
+
+
+
+
+	public static int Moyenne(ArrayList<Integer> L) {
+		int[] T = new int[5];
+		for (Integer i : L) {
+			if(i == 30) {
+				T[0]++;
+			}
+			else if(i == 50) {
+				T[1]++;
+			}
+			else if(i==70) {
+				T[2]++;
+			}
+			else if (i==90) {
+				T[3]++;
+			}
+			else {//i==110
+				T[4]++;
+			}
+		}
+		int indice= 0;
+		int max = T[0];
+		for(int i = 1; i<T.length; i++) {
+			if (T[i]>max) {
+				indice = i;
+				max = T[i];
+			}
+		}
+		switch (indice) {
+		case 1:
+			return 50;
+
+		case 2:
+			return 70;
+
+		case 3:
+			return 90;
+
+		case 4:
+			return 110;
+
+		case 0:
+			return 30;
+
+		default:
+			return -1;
+		}
+
+	}
 
 
 

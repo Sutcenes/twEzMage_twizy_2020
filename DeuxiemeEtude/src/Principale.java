@@ -12,7 +12,7 @@ public class Principale {
 	{
 		//Ouverture le l'image et saturation des rouges
 		System.loadLibrary(Core.NATIVE_LIBRARY_NAME);
-		Mat m=Highgui.imread("p6.jpg",Highgui.CV_LOAD_IMAGE_COLOR);				//p8 avec 1-2-3
+		Mat m=Highgui.imread("p4.jpg",Highgui.CV_LOAD_IMAGE_COLOR);				//p8 avec 1-2-3
 		MaBibliothequeTraitementImageEtendue.afficheImage("Image testée", m);
 		//System.out.println("dim de l'image: "+m.height()+" x "+m.width());
 		Mat transformee=MaBibliothequeTraitementImageEtendue.transformeBGRversHSV(m);

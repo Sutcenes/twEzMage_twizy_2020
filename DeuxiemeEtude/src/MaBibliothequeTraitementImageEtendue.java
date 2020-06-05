@@ -3,7 +3,6 @@ import java.awt.image.BufferedImage;
 import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.InputStream;
-import java.lang.module.FindException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -337,25 +336,25 @@ public class MaBibliothequeTraitementImageEtendue {
 			//System.out.println(matchs.size().height);
 
 
-			
-			
+
+
 			List<Double> distances=new ArrayList<Double>();
 			for(int i=0;i<matchs.size().height;i++) {
 				distances.add(matchs.get(i, 0)[3]);//Récupération des distances
 			}
-			
+
 			double moy=0;
 			int n=distances.size();//On prend tous les points en compte
-			
+
 			for(int i=0;i<n;i++) {
 				moy+=distances.get(i);
-				
+
 			}
 			//System.out.println(distances);
 			moy=moy/n;
 
 			indicateur = 1/moy;//C'était moy initialement
-			
+
 			break;
 
 			/***Methode Match Pixels***/
