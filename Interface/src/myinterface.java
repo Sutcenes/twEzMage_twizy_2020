@@ -49,7 +49,7 @@ public class myinterface extends JFrame {
 	private JPanel panel_2 ;
 	private static JPanel panel_3 ;
 	static int choixSimilitude = 1;
-
+	static ArrayList<Integer> ListPanneaux = new ArrayList<Integer>();
 
 	/**
 	 * Launch the application.
@@ -339,9 +339,12 @@ public class myinterface extends JFrame {
 		VideoCapture camera = new VideoCapture(nomVideo);
 		Mat PanneauAAnalyser = null;
 
-
+		int Moyenne = 30;
+		int AncienneMoyenne;
+		int indexmaxAbsent = 0;
+		
 		while (camera.read(frame)) {
-
+			AncienneMoyenne=Moyenne;
 			String fileImg = "";
 
 			panel_1.removeAll();
@@ -351,6 +354,7 @@ public class myinterface extends JFrame {
 			panel_1.validate();
 
 
+			
 			Mat transformee=MaBibliothequeTraitementImageEtendue.transformeBGRversHSV(frame);
 			//la methode seuillage est ici extraite de l'archivage jar du meme nom 
 			Mat saturee=MaBibliothequeTraitementImage.seuillage(transformee, 6, 170, 90); 
@@ -367,15 +371,56 @@ public class myinterface extends JFrame {
 
 				switch(indexmax){
 				case -1:;break;
-				case 0:vitesse.setText("Panneau 30 détécté");fileImg="ref30.jpg";break;
-				case 1:vitesse.setText("Panneau 50 détécté");fileImg="ref50.jpg";break;
-				case 2:vitesse.setText("Panneau 70 détécté");fileImg="ref70.jpg";break;
-				case 3:vitesse.setText("Panneau 90 détécté");fileImg="ref90.jpg";break;
-				case 4:vitesse.setText("Panneau 110 détécté");fileImg="ref110.jpg";break;
-				case 5:vitesse.setText("Panneau interdiction de dépasser détécté");fileImg="refdouble.jpg";break;
+				case 0:
+					//System.out.println("Panneau 30 détécté");
+					ListPanneaux.add(30);
+					break;
+				case 1:
+					//System.out.println("Panneau 50 détécté");
+					ListPanneaux.add(50);
+					break;
+				case 2:
+					//System.out.println("Panneau 70 détécté");
+					ListPanneaux.add(70);
+					break;
+				case 3:
+					//System.out.println("Panneau 90 détécté");
+					ListPanneaux.add(90);
+					break;
+				case 4:
+					//System.out.println("Panneau 110 détécté");
+					ListPanneaux.add(110);
+					break;
+				case 5:
+					//System.out.println("Panneau interdiction de dépasser détécté");
+					break;
+				}
+			}
+			if (indexmax == -1) {
+				indexmaxAbsent ++;
+			}
+			if (indexmaxAbsent > 50) {
+				indexmaxAbsent = 0;
+				ListPanneaux.clear();
+			}
+			if (ListPanneaux.size() > 20){
+				ListPanneaux.remove(0);
+			}
+			Moyenne = Moyenne(ListPanneaux);
+			
+			if (Moyenne != AncienneMoyenne && !ListPanneaux.isEmpty()) {
+				
+				switch(Moyenne){
+				
+				case 30:vitesse.setText("Panneau 30 détécté");fileImg="ref30.jpg";break;
+				case 50:vitesse.setText("Panneau 50 détécté");fileImg="ref50.jpg";break;
+				case 70:vitesse.setText("Panneau 70 détécté");fileImg="ref70.jpg";break;
+				case 90:vitesse.setText("Panneau 90 détécté");fileImg="ref90.jpg";break;
+				case 110:vitesse.setText("Panneau 110 détécté");fileImg="ref110.jpg";break;
+				default :;break;
 				}
 
-			}
+			
 			if(choixSimilitude==3) {
 				fileImg = "gray2.png";
 			}
@@ -383,6 +428,9 @@ public class myinterface extends JFrame {
 			panel_3.repaint();
 			panel_3.add(new JLabel(new ImageIcon(fileImg)));
 			panel_3.validate();	
+				System.out.println(ListPanneaux);
+				System.out.println(Moyenne+"\n\n");
+			}
 		}
 	}
 
@@ -406,6 +454,56 @@ public class myinterface extends JFrame {
 		}
 		return indexmax;
 	}
+	
+	public static int Moyenne(ArrayList<Integer> L) {
+		int[] T = new int[5];
+		for (Integer i : L) {
+			if(i == 30) {
+				T[0]++;
+			}
+			else if(i == 50) {
+				T[1]++;
+			}
+			else if(i==70) {
+				T[2]++;
+			}
+			else if (i==90) {
+				T[3]++;
+			}
+			else {//i==110
+				T[4]++;
+			}
+		}
+		int indice= 0;
+		int max = T[0];
+		for(int i = 1; i<T.length; i++) {
+			if (T[i]>max) {
+				indice = i;
+				max = T[i];
+			}
+		}
+		switch (indice) {
+		case 1:
+			return 50;
+
+		case 2:
+			return 70;
+
+		case 3:
+			return 90;
+
+		case 4:
+			return 110;
+
+		case 0:
+			return 30;
+
+		default:
+			return -1;
+		}
+
+	}
+
 
 	public static BufferedImage Mat2bufferedImage(Mat image) {
 		MatOfByte bytemat = new MatOfByte();

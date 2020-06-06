@@ -99,7 +99,6 @@ public class AnalyseVideo {
 					//System.out.println("Panneau interdiction de dépasser détécté");
 					break;
 				}
-
 			}
 			if (indexmax == -1) {
 				indexmaxAbsent ++;
