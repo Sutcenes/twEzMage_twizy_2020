@@ -221,7 +221,7 @@ public class myinterface extends JFrame {
 		JButton btnMatching = new JButton("matching");
 		btnMatching.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				
+
 				if(comboBox.getSelectedItem().equals("orb"))
 				{
 
@@ -237,7 +237,7 @@ public class myinterface extends JFrame {
 
 					choixSimilitude = 3;
 				}
-				
+
 				String fileImg = "";
 				//Ouverture le l'image et saturation des rouges
 				System.loadLibrary(Core.NATIVE_LIBRARY_NAME);
@@ -245,7 +245,7 @@ public class myinterface extends JFrame {
 				//MaBibliothequeTraitementImageEtendue.afficheImage("Image testée", m);
 				Mat transformee=MaBibliothequeTraitementImageEtendue.transformeBGRversHSV(m);
 				//la methode seuillage est ici extraite de l'archivage jar du meme nom 
-				Mat saturee=MaBibliothequeTraitementImage.seuillage(transformee, 6, 170, 110);
+				Mat saturee=MaBibliothequeTraitementImage.seuillage(transformee, 6, 170, 90);
 				Mat objetrond = null;
 
 				//Création d'une liste des contours à partir de l'image saturée
@@ -259,8 +259,8 @@ public class myinterface extends JFrame {
 					objetrond=MaBibliothequeTraitementImageEtendue.DetectForm(m,contour);
 
 					if (objetrond!=null){
-						
-						
+
+
 						//MaBibliothequeTraitementImage.afficheImage("Objet rond detécté", objetrond);
 						panel_2.removeAll();
 						panel_2.repaint();
@@ -342,7 +342,7 @@ public class myinterface extends JFrame {
 		int Moyenne = 30;
 		int AncienneMoyenne;
 		int indexmaxAbsent = 0;
-		
+
 		while (camera.read(frame)) {
 			AncienneMoyenne=Moyenne;
 			String fileImg = "";
@@ -354,7 +354,7 @@ public class myinterface extends JFrame {
 			panel_1.validate();
 
 
-			
+
 			Mat transformee=MaBibliothequeTraitementImageEtendue.transformeBGRversHSV(frame);
 			//la methode seuillage est ici extraite de l'archivage jar du meme nom 
 			Mat saturee=MaBibliothequeTraitementImage.seuillage(transformee, 6, 170, 90); 
@@ -407,11 +407,11 @@ public class myinterface extends JFrame {
 				ListPanneaux.remove(0);
 			}
 			Moyenne = Moyenne(ListPanneaux);
-			
+
 			if (Moyenne != AncienneMoyenne && !ListPanneaux.isEmpty()) {
-				
+
 				switch(Moyenne){
-				
+
 				case 30:vitesse.setText("Panneau 30 détécté");fileImg="ref30.jpg";break;
 				case 50:vitesse.setText("Panneau 50 détécté");fileImg="ref50.jpg";break;
 				case 70:vitesse.setText("Panneau 70 détécté");fileImg="ref70.jpg";break;
@@ -420,14 +420,14 @@ public class myinterface extends JFrame {
 				default :;break;
 				}
 
-			
-			if(choixSimilitude==3) {
-				fileImg = "gray2.png";
-			}
-			panel_3.removeAll();
-			panel_3.repaint();
-			panel_3.add(new JLabel(new ImageIcon(fileImg)));
-			panel_3.validate();	
+
+				if(choixSimilitude==3) {
+					fileImg = "gray2.png";
+				}
+				panel_3.removeAll();
+				panel_3.repaint();
+				panel_3.add(new JLabel(new ImageIcon(fileImg)));
+				panel_3.validate();	
 				System.out.println(ListPanneaux);
 				System.out.println(Moyenne+"\n\n");
 			}
@@ -454,7 +454,7 @@ public class myinterface extends JFrame {
 		}
 		return indexmax;
 	}
-	
+
 	public static int Moyenne(ArrayList<Integer> L) {
 		int[] T = new int[5];
 		for (Integer i : L) {

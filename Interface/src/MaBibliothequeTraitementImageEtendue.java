@@ -3,7 +3,6 @@ import java.awt.image.BufferedImage;
 import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.InputStream;
-//import java.lang.module.FindException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -112,6 +111,7 @@ public class MaBibliothequeTraitementImageEtendue {
 		List<MatOfPoint> contours = new ArrayList<MatOfPoint>();
 		MatOfInt4 hierarchy = new MatOfInt4();
 		Imgproc.Canny( input, canny_output, thresh, thresh*2);
+
 
 
 		switch (myinterface.choixSimilitude) {
@@ -302,7 +302,7 @@ public class MaBibliothequeTraitementImageEtendue {
 		Core.normalize(grayObject, grayObject, 0, 255, Core.NORM_MINMAX);
 		Imgproc.resize(grayObject, grayObject, graySign.size());
 
-		
+
 		switch (myinterface.choixSimilitude) {
 
 		/***Methode ORB***/
