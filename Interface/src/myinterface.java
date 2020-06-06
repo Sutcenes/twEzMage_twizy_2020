@@ -279,16 +279,16 @@ public class myinterface extends JFrame {
 						int indexmax=0;
 						for(int j=0;j<scores.length;j++){
 							if (scores[j]>scoremax){scoremax=scores[j];indexmax=j;}}	
-						if(scoremax<0){System.out.println("Aucun Panneau détécté");}
+						if(scoremax<0){System.out.println("Aucun Panneau détecté");}
 						else{switch(indexmax){
 
 						case -1:;break;
-						case 0:vitesse.setText("Panneau 30 détécté");fileImg="ref30.jpg";break;
-						case 1:vitesse.setText("Panneau 50 détécté");fileImg="ref50.jpg";break;
-						case 2:vitesse.setText("Panneau 70 détécté");fileImg="ref70.jpg";break;
-						case 3:vitesse.setText("Panneau 90 détécté");fileImg="ref90.jpg";break;
-						case 4:vitesse.setText("Panneau 110 détécté");fileImg="ref110.jpg";break;
-						case 5:vitesse.setText("Panneau interdiction de dépasser détécté");fileImg="refdouble.jpg";break;
+						case 0:vitesse.setText("Panneau 30 détecté");fileImg="ref30.jpg";break;
+						case 1:vitesse.setText("Panneau 50 détecté");fileImg="ref50.jpg";break;
+						case 2:vitesse.setText("Panneau 70 détecté");fileImg="ref70.jpg";break;
+						case 3:vitesse.setText("Panneau 90 détecté");fileImg="ref90.jpg";break;
+						case 4:vitesse.setText("Panneau 110 détecté");fileImg="ref110.jpg";break;
+						case 5:vitesse.setText("Panneau interdiction de dépasser détecté");fileImg="refdouble.jpg";break;
 						}}
 
 
@@ -321,7 +321,22 @@ public class myinterface extends JFrame {
 			public void actionPerformed(ActionEvent e) {
 				System.loadLibrary(Core.NATIVE_LIBRARY_NAME);
 				System.loadLibrary("opencv_ffmpeg2413_64"); //lecture video
+				
+				if(comboBox.getSelectedItem().equals("orb"))
+				{
 
+					choixSimilitude = 1;
+				}
+				if(comboBox.getSelectedItem().equals("aire"))
+				{
+
+					choixSimilitude = 2;
+				}
+				if(comboBox.getSelectedItem().equals("OCR"))
+				{
+
+					choixSimilitude = 3;
+				}
 
 				MyThread t1 = new MyThread(nomImage.getText(),vitesse,panel_1);
 				t1.start();
@@ -372,27 +387,27 @@ public class myinterface extends JFrame {
 				switch(indexmax){
 				case -1:;break;
 				case 0:
-					//System.out.println("Panneau 30 détécté");
+					//System.out.println("Panneau 30 détecté");
 					ListPanneaux.add(30);
 					break;
 				case 1:
-					//System.out.println("Panneau 50 détécté");
+					//System.out.println("Panneau 50 détecté");
 					ListPanneaux.add(50);
 					break;
 				case 2:
-					//System.out.println("Panneau 70 détécté");
+					//System.out.println("Panneau 70 détecté");
 					ListPanneaux.add(70);
 					break;
 				case 3:
-					//System.out.println("Panneau 90 détécté");
+					//System.out.println("Panneau 90 détecté");
 					ListPanneaux.add(90);
 					break;
 				case 4:
-					//System.out.println("Panneau 110 détécté");
+					//System.out.println("Panneau 110 détecté");
 					ListPanneaux.add(110);
 					break;
 				case 5:
-					//System.out.println("Panneau interdiction de dépasser détécté");
+					//System.out.println("Panneau interdiction de dépasser détecté");
 					break;
 				}
 			}
@@ -412,18 +427,14 @@ public class myinterface extends JFrame {
 
 				switch(Moyenne){
 
-				case 30:vitesse.setText("Panneau 30 détécté");fileImg="ref30.jpg";break;
-				case 50:vitesse.setText("Panneau 50 détécté");fileImg="ref50.jpg";break;
-				case 70:vitesse.setText("Panneau 70 détécté");fileImg="ref70.jpg";break;
-				case 90:vitesse.setText("Panneau 90 détécté");fileImg="ref90.jpg";break;
-				case 110:vitesse.setText("Panneau 110 détécté");fileImg="ref110.jpg";break;
-				default :;break;
+				case 30:vitesse.setText("Panneau 30 détecté");fileImg="ref30.jpg";break;
+				case 50:vitesse.setText("Panneau 50 détecté");fileImg="ref50.jpg";break;
+				case 70:vitesse.setText("Panneau 70 détecté");fileImg="ref70.jpg";break;
+				case 90:vitesse.setText("Panneau 90 détecté");fileImg="ref90.jpg";break;
+				case 110:vitesse.setText("Panneau 110 détecté");fileImg="ref110.jpg";break;
+				default :break;
 				}
-
-
-				if(choixSimilitude==3) {
-					fileImg = "gray2.png";
-				}
+				
 				panel_3.removeAll();
 				panel_3.repaint();
 				panel_3.add(new JLabel(new ImageIcon(fileImg)));

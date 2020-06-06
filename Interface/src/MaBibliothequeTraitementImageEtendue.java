@@ -406,7 +406,7 @@ public class MaBibliothequeTraitementImageEtendue {
 
 			try {
 				String result = instance.doOCR(imageFile);
-				System.out.println(result);
+				//System.out.println(result);
 
 				//Traitement du résultat: suppression des erreurs/caracteres en trop
 				result=result.split("\n")[0];
@@ -417,10 +417,10 @@ public class MaBibliothequeTraitementImageEtendue {
 				}
 				result=newResult;
 
-				System.out.println(result);
+				/*System.out.println(result);
 				System.out.println(signfile.split("ref")[1].split(".jpg")[0]);
 				System.out.println(result.equals(signfile.split("ref")[1].split(".jpg")[0]));
-				System.out.println();
+				System.out.println();*/
 
 
 				if(result.equals(signfile.split("ref")[1].split(".jpg")[0])) return 1;
