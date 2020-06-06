@@ -397,7 +397,7 @@ public class MaBibliothequeTraitementImageEtendue {
 				}
 			}
 
-			
+
 			Highgui.imwrite("gray2.png",grayObject);
 			File imageFile = new File("gray2.png");
 
