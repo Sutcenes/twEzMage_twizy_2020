@@ -1,0 +1,11 @@
+import org.opencv.highgui.VideoCapture;
+
+public class VideoCap {
+
+	public static void main(String[] args) {
+		// TODO Auto-generated method stub
+		VideoCapture cap;
+		cap = new VideoCapture();
+	}
+
+}

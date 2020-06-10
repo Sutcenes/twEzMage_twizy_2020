@@ -1,0 +1,278 @@
+
+
+import java.awt.EventQueue;
+import java.awt.Graphics;
+import java.awt.image.BufferedImage;
+import java.io.ByteArrayInputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.util.ArrayList;
+import java.util.List;
+
+import javax.imageio.ImageIO;
+import javax.swing.ImageIcon;
+import javax.swing.JFrame;
+import javax.swing.JLabel;
+import javax.swing.JPanel;
+import javax.swing.JTextField;
+import javax.swing.border.EmptyBorder;
+
+import org.opencv.core.Mat;
+import org.opencv.core.MatOfByte;
+import org.opencv.core.MatOfPoint;
+import org.opencv.highgui.Highgui;
+import org.opencv.highgui.VideoCapture;
+
+import CaptureVideo.VideoCap;
+
+public class MyFrame extends JFrame {
+	private choixSimilitude = 1;
+    private JPanel contentPane;
+
+  /**
+  * Launch the application.
+  */
+    public static void main(String[] args) {
+        EventQueue.invokeLater(new Runnable() {
+            public void run() {
+                try {
+                    MyFrame frame = new MyFrame();
+                    
+                    frame.setVisible(true);
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+            }
+        });
+    }
+
+  
+  /**
+  * Create the frame.
+  */
+    public MyFrame() {
+        setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        setBounds(100, 100, 650, 490);
+        contentPane = new JPanel();
+        contentPane.setBorder(new EmptyBorder(5, 5, 5, 5));
+        setContentPane(contentPane);
+        contentPane.setLayout(null);
+  
+        new MyThread().start();
+    }
+ 
+    VideoCap videoCap = new VideoCap();
+ 
+    public void paint(Graphics g){
+        g = contentPane.getGraphics();
+        BufferedImage image = videoCap.getOneFrame();
+        g.drawImage(image, 0, 0, this);
+        
+    }
+ 
+    class MyThread extends Thread{
+        @Override
+        public void run() {
+            for (;;){
+                repaint();
+                try { Thread.sleep(30);
+                } catch (InterruptedException e) {    }
+            }  
+        } 
+    }
+    
+    public static void LectureVideo(String nomVideo, JTextField vitesse, JPanel panel_1 ) {
+
+		Mat frame = new Mat();
+		VideoCapture camera = new VideoCapture(nomVideo);
+		Mat PanneauAAnalyser = null;
+
+		int Moyenne = 30;
+		int AncienneMoyenne;
+		int indexmaxAbsent = 0;
+
+		while (camera.read(frame)) {
+			AncienneMoyenne=Moyenne;
+			String fileImg = "";
+
+			panel_1.removeAll();
+
+			panel_1.add(new JLabel(new ImageIcon(Mat2bufferedImage(frame))));
+			panel_1.repaint();
+			panel_1.validate();
+
+
+
+			Mat transformee=MaBibliothequeTraitementImageEtendue.transformeBGRversHSV(frame);
+			//la methode seuillage est ici extraite de l'archivage jar du meme nom 
+			Mat saturee;
+			switch (choixSimilitude) {
+			case 3:
+			     saturee=MaBibliothequeTraitementImage.seuillage(transformee, 6, 170, 50);
+			break;
+			default:
+				 saturee=MaBibliothequeTraitementImage.seuillage(transformee, 6, 170, 90);
+				break;
+			}
+			//Mat saturee=MaBibliothequeTraitementImage.seuillage(transformee, 6, 170, 90); 
+			Mat objetrond = null;
+			//Création d'une liste des contours à partir de l'image saturée
+			List<MatOfPoint> ListeContours= MaBibliothequeTraitementImageEtendue.ExtractContours(saturee);
+			int i=0;
+			int indexmax=0;
+			
+			for (MatOfPoint contour: ListeContours  ){
+				i++;
+				objetrond=MaBibliothequeTraitementImageEtendue.DetectForm(frame,contour);
+				indexmax=identifiepanneau(objetrond);
+
+				switch(indexmax){
+				case -1:;break;
+				case 0:
+					//System.out.println("Panneau 30 détecté");
+					ListPanneaux.add(30);
+					break;
+				case 1:
+					//System.out.println("Panneau 50 détecté");
+					ListPanneaux.add(50);
+					break;
+				case 2:
+					//System.out.println("Panneau 70 détecté");
+					ListPanneaux.add(70);
+					break;
+				case 3:
+					//System.out.println("Panneau 90 détecté");
+					ListPanneaux.add(90);
+					break;
+				case 4:
+					//System.out.println("Panneau 110 détecté");
+					ListPanneaux.add(110);
+					break;
+				case 5:
+					//System.out.println("Panneau interdiction de dépasser détecté");
+					break;
+				}
+			}
+			if (indexmax == -1) {
+				indexmaxAbsent ++;
+			}
+			if (indexmaxAbsent > 50) {
+				indexmaxAbsent = 0;
+				ListPanneaux.clear();
+			}
+			if (ListPanneaux.size() > 20){
+				ListPanneaux.remove(0);
+			}
+			Moyenne = Moyenne(ListPanneaux);
+
+			if (Moyenne != AncienneMoyenne && !ListPanneaux.isEmpty()) {
+
+				switch(Moyenne){
+
+				case 30:vitesse.setText("Panneau 30 détecté");fileImg="ref30.jpg";break;
+				case 50:vitesse.setText("Panneau 50 détecté");fileImg="ref50.jpg";break;
+				case 70:vitesse.setText("Panneau 70 détecté");fileImg="ref70.jpg";break;
+				case 90:vitesse.setText("Panneau 90 détecté");fileImg="ref90.jpg";break;
+				case 110:vitesse.setText("Panneau 110 détecté");fileImg="ref110.jpg";break;
+				default :break;
+				}
+
+				panel_3.removeAll();
+				panel_3.repaint();
+				panel_3.add(new JLabel(new ImageIcon(fileImg)));
+				panel_3.validate();	
+				System.out.println(ListPanneaux);
+				System.out.println(Moyenne+"\n\n");
+			}
+		}
+	}
+	
+
+
+	public static int identifiepanneau(Mat objetrond){
+		double [] scores=new double [6];
+		int indexmax=-1;
+		if (objetrond!=null){
+			scores[0]=MaBibliothequeTraitementImageEtendue.Similitude(objetrond,"ref30.jpg");
+			scores[1]=MaBibliothequeTraitementImageEtendue.Similitude(objetrond,"ref50.jpg");
+			scores[2]=MaBibliothequeTraitementImageEtendue.Similitude(objetrond,"ref70.jpg");
+			scores[3]=MaBibliothequeTraitementImageEtendue.Similitude(objetrond,"ref90.jpg");
+			scores[4]=MaBibliothequeTraitementImageEtendue.Similitude(objetrond,"ref110.jpg");
+			scores[5]=MaBibliothequeTraitementImageEtendue.Similitude(objetrond,"refdouble.jpg");
+
+			double scoremax=scores[0];
+
+			for(int j=1;j<scores.length;j++){
+				if (scores[j]>scoremax){scoremax=scores[j];indexmax=j;}}	
+
+
+		}
+		return indexmax;
+	}
+
+	public static int Moyenne(ArrayList<Integer> L) {
+		int[] T = new int[5];
+		for (Integer i : L) {
+			if(i == 30) {
+				T[0]++;
+			}
+			else if(i == 50) {
+				T[1]++;
+			}
+			else if(i==70) {
+				T[2]++;
+			}
+			else if (i==90) {
+				T[3]++;
+			}
+			else {//i==110
+				T[4]++;
+			}
+		}
+		int indice= 0;
+		int max = T[0];
+		for(int i = 1; i<T.length; i++) {
+			if (T[i]>max) {
+				indice = i;
+				max = T[i];
+			}
+		}
+		switch (indice) {
+		case 1:
+			return 50;
+
+		case 2:
+			return 70;
+
+		case 3:
+			return 90;
+
+		case 4:
+			return 110;
+
+		case 0:
+			return 30;
+
+		default:
+			return -1;
+		}
+
+	}
+
+
+	public static BufferedImage Mat2bufferedImage(Mat image) {
+		MatOfByte bytemat = new MatOfByte();
+		Highgui.imencode(".jpg", image, bytemat);
+		byte[] bytes = bytemat.toArray();
+		InputStream in = new ByteArrayInputStream(bytes);
+		BufferedImage img = null;
+		try {
+			img = ImageIO.read(in);
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		return img;
+	}
+}
+}
